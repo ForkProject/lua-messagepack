@@ -15,7 +15,7 @@ like( m._DESCRIPTION, 'MessagePack', "_DESCRIPTION" )
 like( m._VERSION, '^%d%.%d%.%d$', "_VERSION" )
 
 type_ok( m.packers, 'table', "table packers" )
-type_ok( m.unpackers, 'table', "table unpackers" )
+type_ok( m.unpack_cursor, 'function', "function unpack_cursor" )
 type_ok( m.build_ext, 'function', "function build_ext" )
 
 if m.full64bits then

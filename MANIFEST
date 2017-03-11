@@ -24,4 +24,5 @@ test/14-function.t
 test/15-ffi-cdata.t
 test/21-multiples.t
 test/22-closure.t
+test/31-custom-unpack.t
 test/issue6.t

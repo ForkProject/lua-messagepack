@@ -18,7 +18,7 @@ It's really fast with LuaJIT.
 ## References
 
 The MessagePack specification is available at
-[github.com/msgpack/msgpack](github.com/msgpack/msgpack).
+[github.com/msgpack/msgpack](https://github.com/msgpack/msgpack).
 
 ## Status
 
@@ -60,7 +60,7 @@ make test
 
 ## Copyright and License
 
-Copyright &copy; 2012-2016 Fran&ccedil;ois Perrad
+Copyright &copy; 2012-2017 Fran&ccedil;ois Perrad
 [![OpenHUB](http://www.openhub.net/accounts/4780/widgets/account_rank.gif)](http://www.openhub.net/accounts/4780?ref=Rank)
 [![LinkedIn](http://www.linkedin.com/img/webpromo/btn_liprofile_blue_80x15.gif)](http://www.linkedin.com/in/fperrad)
 

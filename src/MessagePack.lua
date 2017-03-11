@@ -520,7 +520,7 @@ end
 
 local unpackers         -- forward declaration
 
-local function _unpack (c)
+local function unpack_cursor (c)
     local s, i, j = c.s, c.i, c.j
     if i > j then
         c:underflow(i)
@@ -530,6 +530,7 @@ local function _unpack (c)
     c.i = i+1
     return unpackers[val](c, val)
 end
+m.unpack_cursor = unpack_cursor
 
 local function unpack_str (c, n)
     local s, i, j = c.s, c.i, c.j
@@ -546,7 +547,7 @@ end
 local function unpack_array (c, n)
     local t = {}
     for i = 1, n do
-        t[i] = _unpack(c)
+        t[i] = unpack_cursor(c)
     end
     return t
 end
@@ -554,8 +555,8 @@ end
 local function unpack_map (c, n)
     local t = {}
     for i = 1, n do
-        local k = _unpack(c)
-        local val = _unpack(c)
+        local k = unpack_cursor(c)
+        local val = unpack_cursor(c)
         if k == nil or k ~= k then
             k = m.sentinel
         end
@@ -748,7 +749,7 @@ local function unpack_ext (c, n, tag)
     return m.build_ext(tag, s:sub(i, e))
 end
 
-unpackers = {
+unpackers = setmetatable({
     [0xC0] = function () return nil end,
     [0xC2] = function () return false end,
     [0xC3] = function () return true end,
@@ -780,8 +781,7 @@ unpackers = {
     [0xDD] = function (c) return unpack_array(c, unpack_uint32(c)) end,
     [0xDE] = function (c) return unpack_map(c, unpack_uint16(c)) end,
     [0xDF] = function (c) return unpack_map(c, unpack_uint32(c)) end,
-}
-m.unpackers = setmetatable(unpackers, {
+}, {
     __index = function (t, k)
         if k < 0xC0 then
             if k < 0x80 then
@@ -806,7 +806,7 @@ local function cursor_string (str)
         s = str,
         i = 1,
         j = #str,
-        underflow = function (self)
+        underflow = function ()
                         error "missing bytes"
                     end,
     }
@@ -837,7 +837,7 @@ end
 function m.unpack (s)
     checktype('unpack', 1, s, 'string')
     local cursor = cursor_string(s)
-    local data = _unpack(cursor)
+    local data = unpack_cursor(cursor)
     if cursor.i < cursor.j then
         error "extra bytes"
     end
@@ -849,7 +849,7 @@ function m.unpacker (src)
         local cursor = cursor_string(src)
         return function ()
             if cursor.i <= cursor.j then
-                return cursor.i, _unpack(cursor)
+                return cursor.i, unpack_cursor(cursor)
             end
         end
     elseif type(src) == 'function' then
@@ -859,7 +859,7 @@ function m.unpacker (src)
                 pcall(cursor.underflow, cursor, cursor.i)
             end
             if cursor.i <= cursor.j then
-                return true, _unpack(cursor)
+                return true, unpack_cursor(cursor)
             end
         end
     else
@@ -887,9 +887,9 @@ else
 end
 set_array'without_hole'
 
-m._VERSION = '0.4.0'
+m._VERSION = '0.5.0'
 m._DESCRIPTION = "lua-MessagePack : a pure Lua implementation"
-m._COPYRIGHT = "Copyright (c) 2012-2016 Francois Perrad"
+m._COPYRIGHT = "Copyright (c) 2012-2017 Francois Perrad"
 return m
 --
 -- This library is licensed under the terms of the MIT/X11 license,
